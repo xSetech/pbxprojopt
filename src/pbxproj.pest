@@ -1,0 +1,123 @@
+// Grammar for the OpenStep/Next-style property list as used by XCode
+
+WHITESPACE = _{ " " }
+
+/*  Comments and the file encoding
+
+    Emperically, possible file encodings range from UTF-16 (either little or big
+    endian) to an odd variant of Latin 1 from the late 1980s ("NeXT character set").
+    This tool always assumes UTF-8, but this encoding specfier is parsed as it's
+    always added by XCode.
+*/
+
+FileEncoding = @{
+    "UTF8"
+}
+
+FileEncodingSpecifier = @{
+    "!$*" ~ FileEncoding ~ "*$!"
+}
+
+LineComment = @{
+    "//" ~ (" "? ~ FileEncodingSpecifier | !NEWLINE ~ ANY)* ~ (NEWLINE | EOI)
+}
+
+BlockComment = @{
+    "/*" ~ (!"*/" ~ ANY)* ~ "*/"
+}
+
+Comment = @{
+    LineComment | BlockComment
+}
+
+/*  Strings
+
+    Conceptually, there are integers, bools, and other such types; however, use
+    XCode's usage of unquoted strings for most fields makes it hard to disambiguate
+    the type in the parser. So, this parser only uses strings where bool, integer,
+    or float may be intended.
+*/
+
+QuotedStringCharacters = @{
+    !("\"" | "\\") ~ ANY
+    | "\\" ~ ("\"" | "\\" | "n" | "r" | "t")
+}
+
+QuotedString = @{
+    "\"" ~ (QuotedStringCharacters)* ~ "\""
+}
+
+UnquotedString = @{
+    (ASCII_ALPHANUMERIC | "_" | "$" | "+" | "/" | ":" | "." | "-")+
+}
+
+String = @{
+    QuotedString | UnquotedString
+}
+
+/*  Arrays
+*/
+
+ArrayValue = {
+    Comment* ~
+    (
+        Array
+        | Dictionary
+        | String
+    )~
+    Comment*
+}
+
+Array = {
+    ("(" ~ ")")
+    | ("(" ~ ArrayValue ~ ("," ~ ArrayValue)* ~ ")")
+}
+
+/*  Dictionaries
+*/
+
+DictionaryKey = {
+    Comment* ~ String ~ Comment*
+}
+
+DictionaryValue = {
+    Comment* ~
+    (
+        Array
+        | Dictionary
+        | String
+    )~
+    Comment*
+}
+
+DictionaryEntry = {
+    DictionaryKey ~ "=" ~ DictionaryValue ~ ";"
+}
+
+Dictionary = {
+    ("{" ~ "}")
+    | ("{" ~ DictionaryEntry+ ~ "}")
+
+}
+
+/*  File specification
+*/
+
+Element = {
+    Comment
+    | Array
+    | Dictionary
+    | String
+}
+
+Ignorable = _{
+    " " | "\t" | NEWLINE
+}
+
+File = {
+    SOI ~
+    (Ignorable | Element)+ ~
+    EOI
+}
+
+// eof
