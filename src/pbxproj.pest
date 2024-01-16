@@ -1,6 +1,6 @@
 // Grammar for the OpenStep/Next-style property list as used by XCode
 
-WHITESPACE = _{ " " }
+WHITESPACE = _{ " " | "\t" | "\n" | "\r" }
 
 /*  Comments and the file encoding
 

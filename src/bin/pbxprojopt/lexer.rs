@@ -111,6 +111,7 @@ mod tests {
         test_case_lexable!("{ x = y ; }");
         test_case_lexable!("{ \"x\" = \"y\" ; }");
         test_case_lexable!("{ \"x\" /* a */ = \"y\" /* b */ ; }");
+        test_case_lexable!("{\nx = 1;\n}");
 
         test_case_unlexable!("{;}");
         test_case_unlexable!("{x=}");
