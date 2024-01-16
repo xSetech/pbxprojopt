@@ -2,13 +2,7 @@
 
 WHITESPACE = _{ " " | "\t" | "\n" | "\r" }
 
-/*  Comments and the file encoding
-
-    Emperically, possible file encodings range from UTF-16 (either little or big
-    endian) to an odd variant of Latin 1 from the late 1980s ("NeXT character set").
-    This tool always assumes UTF-8, but this encoding specfier is parsed as it's
-    always added by XCode.
-*/
+/* Comments, file encoding, and special markers */
 
 FileEncoding = @{
     "UTF8"
@@ -30,13 +24,7 @@ Comment = @{
     LineComment | BlockComment
 }
 
-/*  Strings
-
-    Conceptually, there are integers, bools, and other such types; however, use
-    XCode's usage of unquoted strings for most fields makes it hard to disambiguate
-    the type in the parser. So, this parser only uses strings where bool, integer,
-    or float may be intended.
-*/
+/* Strings */
 
 QuotedStringCharacters = @{
     !("\"" | "\\") ~ ANY
@@ -55,10 +43,9 @@ String = @{
     QuotedString | UnquotedString
 }
 
-/*  Arrays
-*/
+/* Arrays */
 
-ArrayValue = {
+ArrayEntry = {
     Comment* ~
     (
         Array
@@ -70,17 +57,16 @@ ArrayValue = {
 
 Array = {
     ("(" ~ ")")
-    | ("(" ~ ArrayValue ~ ("," ~ ArrayValue)* ~ ","? ~ ")")
+    | ("(" ~ ArrayEntry ~ ("," ~ ArrayEntry)* ~ ","? ~ ")")
 }
 
-/*  Dictionaries
-*/
+/*  Dictionaries and key-value pairs */
 
-DictionaryKey = {
+DictKey = {
     Comment* ~ String ~ Comment*
 }
 
-DictionaryValue = {
+DictVal = {
     Comment* ~
     (
         Array
@@ -90,33 +76,26 @@ DictionaryValue = {
     Comment*
 }
 
-DictionaryEntry = {
-    DictionaryKey ~ "=" ~ DictionaryValue ~ ";" ~ Comment*
+DictEntry = {
+    DictKey ~ "=" ~ DictVal ~ ";" ~ Comment*
 }
 
 Dictionary = {
     ("{" ~ "}")
-    | ("{" ~ DictionaryEntry+ ~ "}")
+    | ("{" ~ DictEntry+ ~ "}")
 
 }
 
-/*  File specification
-*/
-
-Element = {
-    Comment
-    | Array
-    | Dictionary
-    | String
-}
-
-Ignorable = _{
-    " " | "\t" | NEWLINE
-}
+/* File specification */
 
 File = {
     SOI ~
-    (Ignorable | Element)+ ~
+    (
+        Comment
+        | Array
+        | Dictionary
+        | String
+        )+ ~
     EOI
 }
 

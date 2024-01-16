@@ -1,6 +1,6 @@
 [package]
 name = "pbxprojopt"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 description = ".pbxproj file optimizer"
 authors = ["Seth Junot"]
@@ -10,6 +10,7 @@ name = "pbxprojopt"
 path = "src/bin/pbxprojopt/pbxprojopt.rs"
 
 [dependencies]
+ansi_term = "0.12.1"
 clap = { version = "4.4.17", features = ["derive"] }
 pest = "2.7.6"
 pest_derive = "2.7.6"
