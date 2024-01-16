@@ -101,6 +101,7 @@ mod tests {
         test_case_lexable!("( \"1\", \"2\", \"3\" )");
         test_case_lexable!("( // \"1\", \"2\", \"3\" )\n1, 2, 3)");
         test_case_lexable!("( 1 /* a */, 2 /* a */, /* c */ 3 /* d */ )");
+        test_case_lexable!("(1, 2, 3,)");
     }
 
     #[test]
