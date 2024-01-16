@@ -91,7 +91,7 @@ DictionaryValue = {
 }
 
 DictionaryEntry = {
-    DictionaryKey ~ "=" ~ DictionaryValue ~ ";"
+    DictionaryKey ~ "=" ~ DictionaryValue ~ ";" ~ Comment*
 }
 
 Dictionary = {
