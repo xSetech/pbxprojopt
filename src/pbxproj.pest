@@ -4,23 +4,31 @@ WHITESPACE = _{ " " | "\t" | "\n" | "\r" }
 
 /* Comments, file encoding, and special markers */
 
-FileEncoding = @{
+FileEncoding = ${
     "UTF8"
 }
 
-FileEncodingSpecifier = @{
+FileEncodingSpecifier = _{
     "!$*" ~ FileEncoding ~ "*$!"
 }
 
-LineComment = @{
-    "//" ~ (" "? ~ FileEncodingSpecifier | !NEWLINE ~ ANY)* ~ (NEWLINE | EOI)
+LineCommentEnd = _{
+    NEWLINE | EOI
 }
 
-BlockComment = @{
+LineCommentValue = ${
+    (!NEWLINE ~ ANY)+
+}
+
+LineComment = @{
+    "//" ~ WHITESPACE* ~ (FileEncodingSpecifier | LineCommentValue?) ~ LineCommentEnd
+}
+
+BlockComment = ${
     "/*" ~ (!"*/" ~ ANY)* ~ "*/"
 }
 
-Comment = @{
+Comment = _{
     LineComment | BlockComment
 }
 
