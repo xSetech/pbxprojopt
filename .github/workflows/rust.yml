@@ -1,0 +1,40 @@
+name: Basic build and test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - os: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Cache of Cargo registry and build artifacts
+      id: cache-rust
+      uses: actions/cache@v2
+      with:
+        path: |
+          ~/.cargo/bin
+          ~/.cargo/registry
+          ~/.cargo/git
+          target
+        key: rust-${{ matrix.os }}-${{ hashFiles('**/Cargo.toml', '**/Cargo.lock') }}
+
+    - name: Build
+      run: cargo build
+
+    - name: Test
+      run: cargo test
