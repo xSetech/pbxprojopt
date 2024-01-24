@@ -24,8 +24,12 @@ LineComment = @{
     "//" ~ WHITESPACE* ~ (FileEncodingSpecifier | LineCommentValue?) ~ LineCommentEnd
 }
 
-BlockComment = ${
-    "/*" ~ (!"*/" ~ ANY)* ~ "*/"
+BlockCommentValue = ${
+    (!"*/" ~ ANY)+
+}
+
+BlockComment = {
+    "/*" ~ (!"*/" ~ BlockCommentValue)? ~ "*/"
 }
 
 Comment = _{
