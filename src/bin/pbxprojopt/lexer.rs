@@ -150,12 +150,23 @@ mod tests {
     }
 
     #[test]
+    pub fn test_file_encoding() {
+        test_case_lexable!(
+            "// !$*UTF8*$!",
+            vec![
+                "File->LineComment->FileEncoding<6,10>: UTF8",
+                "    ->EOI<13,13>$"
+            ]
+        );
+    }
+
+    #[test]
     pub fn test_comment_line() {
         test_case_lexable!(
             "//",
             vec![
                 "File->LineComment<0,2>: //",
-                "    ->EOI<2,2>$",
+                "    ->EOI<2,2>$"
             ]
         );
         test_case_lexable!("//abc123");
@@ -164,14 +175,27 @@ mod tests {
         test_case_lexable!("// abc123 \n");
         test_case_lexable!("// abc123 \n// abc123 \n");
         test_case_lexable!(" // abc123 \n // abc123 \n");
-        test_case_lexable!("\n // abc123 \n // abc123 \n");
+        test_case_lexable!(
+            "\n // abc123\n // abc123 \n",
+            vec![
+                "File->LineComment->LineCommentValue<5,11>: abc123",
+                "    ->LineComment->LineCommentValue<16,23>: abc123 ",
+                "    ->EOI<24,24>$"
+            ]
+        );
     }
 
     #[test]
     pub fn test_comment_block() {
         test_case_lexable!("/**/");
         test_case_lexable!("/*abc123*/");
-        test_case_lexable!("/* abc123 */");
+        test_case_lexable!(
+            "/* abc123 */",
+            vec![
+                "File->BlockComment->BlockCommentValue<3,10>: abc123 ",
+                "    ->EOI<12,12>$"
+            ]
+        );
         test_case_lexable!("\n/* abc123 */\n");
         test_case_lexable!("/*\nabc123\n*/");
         test_case_lexable!("/*\n*/");
@@ -180,7 +204,13 @@ mod tests {
     #[test]
     pub fn test_string_quoted() {
         test_case_lexable!("\"\"");
-        test_case_lexable!("\"abc123\"");
+        test_case_lexable!(
+            "\"abc123\"",
+            vec![
+                r#"File->String<0,8>: \"abc123\""#,
+                r#"    ->EOI<8,8>$"#
+            ]
+        );
         test_case_lexable!("\"!@#$%^&*()_+1234567890-={}[];':<>,./?`~\"");
 
         // Note, character escape is implemented in the parser
@@ -200,7 +230,13 @@ mod tests {
 
     #[test]
     pub fn test_string_unquoted() {
-        test_case_lexable!("ABC123");
+        test_case_lexable!(
+            "ABC123",
+            vec![
+                "File->String<0,6>: ABC123",
+                "    ->EOI<6,6>$"
+            ]
+        );
         test_case_lexable!("example.test");
         test_case_lexable!("/foo/bar/baz");
         test_case_lexable!("FOO_BAR_BAZ");
@@ -213,7 +249,15 @@ mod tests {
         test_case_lexable!(" ( ) ");
         test_case_lexable!("(1)");
         test_case_lexable!("( 1 )");
-        test_case_lexable!("(1,2,3)");
+        test_case_lexable!(
+            "(1,2,3)",
+            vec![
+                "File->Array->ArrayEntry->String<1,2>: 1",
+                "           ->ArrayEntry->String<3,4>: 2",
+                "           ->ArrayEntry->String<5,6>: 3",
+                "    ->EOI<7,7>$"
+            ]
+        );
         test_case_lexable!("(1, 2, 3)");
         test_case_lexable!("( 1, 2, 3 )");
         test_case_lexable!("( \"1\", \"2\", \"3\" )");
@@ -226,7 +270,16 @@ mod tests {
     pub fn test_dictionary() {
         test_case_lexable!("{}");
         test_case_lexable!("{x=y;}");
-        test_case_lexable!("{x=y;a=b;}");
+        test_case_lexable!(
+            "{x=y;a=b;}",
+            vec![
+                "File->Dictionary->DictEntry->DictKey->String<1,2>: x",
+                "                           ->DictVal->String<3,4>: y",
+                "                ->DictEntry->DictKey->String<5,6>: a",
+                "                           ->DictVal->String<7,8>: b",
+                "    ->EOI<10,10>$"
+            ]
+        );
         test_case_lexable!("{ x = y ; }");
         test_case_lexable!(r#"{ "x" = "y" ; }"#);
         test_case_lexable!(r#"{ "x" /* a */ = "y" /* b */ ; }"#);
@@ -243,7 +296,17 @@ mod tests {
         test_case_lexable!("(())");
         test_case_lexable!("(1, 2, (3, 4))");
         test_case_lexable!("(1, 2, (3, {x = 1; y = 2;}))");
-        test_case_lexable!("{x = (1, 2); y = 3;}");
+        test_case_lexable!(
+            "{x = (1, 2); y = 3;}",
+            vec![
+                "File->Dictionary->DictEntry->DictKey->String<1,2>: x",
+                "                           ->DictVal->Array->ArrayEntry->String<6,7>: 1",
+                "                                           ->ArrayEntry->String<9,10>: 2",
+                "                ->DictEntry->DictKey->String<13,14>: y",
+                "                           ->DictVal->String<17,18>: 3",
+                "    ->EOI<20,20>$"
+            ]
+        );
         test_case_lexable!("{x = (); y = {z = 1;};}");
     }
 
