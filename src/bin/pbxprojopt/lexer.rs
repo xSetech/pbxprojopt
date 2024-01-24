@@ -192,7 +192,7 @@ mod tests {
         test_case_lexable!(
             "/* abc123 */",
             vec![
-                "File->BlockComment->BlockCommentValue<3,10>: abc123 ",
+                "File->BlockComment->BlockCommentValue<3,9>: abc123",
                 "    ->EOI<12,12>$"
             ]
         );

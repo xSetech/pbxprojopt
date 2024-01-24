@@ -25,11 +25,11 @@ LineComment = @{
 }
 
 BlockCommentValue = ${
-    (!"*/" ~ ANY)+
+    (!(WHITESPACE | "*/") ~ ANY ~ (WHITESPACE+ ~ !"*/" ~ ANY)?)+
 }
 
 BlockComment = {
-    "/*" ~ (!"*/" ~ BlockCommentValue)? ~ "*/"
+    "/*" ~ BlockCommentValue? ~ "*/"
 }
 
 Comment = _{
