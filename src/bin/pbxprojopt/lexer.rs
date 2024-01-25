@@ -157,7 +157,7 @@ mod tests {
         test_case_lexable!(
             "// !$*UTF8*$!",
             vec![
-                "File->LineComment->FileEncoding<6,10>: UTF8",
+                "File->Comment->LineComment->FileEncoding<6,10>: UTF8",
                 "    ->EOI<13,13>$"
             ]
         );
@@ -168,7 +168,7 @@ mod tests {
         test_case_lexable!(
             "//",
             vec![
-                "File->LineComment<0,2>: //",
+                "File->Comment->LineComment<0,2>: //",
                 "    ->EOI<2,2>$"
             ]
         );
@@ -181,8 +181,8 @@ mod tests {
         test_case_lexable!(
             "\n // abc123\n // abc123 \n",
             vec![
-                "File->LineComment->LineCommentValue<5,11>: abc123",
-                "    ->LineComment->LineCommentValue<16,23>: abc123 ",
+                "File->Comment->LineComment->LineCommentValue<5,11>: abc123",
+                "    ->Comment->LineComment->LineCommentValue<16,23>: abc123 ",
                 "    ->EOI<24,24>$"
             ]
         );
@@ -195,7 +195,7 @@ mod tests {
         test_case_lexable!(
             "/* abc123 */",
             vec![
-                "File->BlockComment->BlockCommentValue<3,9>: abc123",
+                "File->Comment->BlockComment->BlockCommentValue<3,9>: abc123",
                 "    ->EOI<12,12>$"
             ]
         );

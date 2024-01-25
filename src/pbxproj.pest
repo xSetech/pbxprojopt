@@ -32,7 +32,7 @@ BlockComment = {
     "/*" ~ BlockCommentValue? ~ "*/"
 }
 
-Comment = _{
+Comment = {
     LineComment | BlockComment
 }
 
