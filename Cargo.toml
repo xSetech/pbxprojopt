@@ -14,3 +14,6 @@ ansi_term = "0.12.1"
 clap = { version = "4.4.17", features = ["derive"] }
 pest = "2.7.6"
 pest_derive = "2.7.6"
+
+[dev-dependencies]
+pretty_assertions = "1.4.0"
