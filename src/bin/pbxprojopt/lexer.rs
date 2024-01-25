@@ -99,6 +99,8 @@ pub fn visualize_matched_grammar_rule(
 mod tests {
     use super::*;
     use pest::Parser as PestParser;
+
+    #[allow(unused_imports)]
     use pretty_assertions::{assert_eq, assert_ne};
 
     /// Tests whether the given 'content' is parsable. Optionally compares the
@@ -208,7 +210,7 @@ mod tests {
         test_case_lexable!(
             "\"abc123\"",
             vec![
-                r#"File->String<0,8>: "abc123""#,
+                r#"File->String->QuotedString<1,7>: abc123"#,
                 r#"    ->EOI<8,8>$"#
             ]
         );
@@ -234,7 +236,7 @@ mod tests {
         test_case_lexable!(
             "ABC123",
             vec![
-                "File->String<0,6>: ABC123",
+                "File->String->UnquotedString<0,6>: ABC123",
                 "    ->EOI<6,6>$"
             ]
         );
@@ -253,9 +255,9 @@ mod tests {
         test_case_lexable!(
             "(1,2,3)",
             vec![
-                "File->Array->ArrayEntry->String<1,2>: 1",
-                "           ->ArrayEntry->String<3,4>: 2",
-                "           ->ArrayEntry->String<5,6>: 3",
+                "File->Array->ArrayEntry->String->UnquotedString<1,2>: 1",
+                "           ->ArrayEntry->String->UnquotedString<3,4>: 2",
+                "           ->ArrayEntry->String->UnquotedString<5,6>: 3",
                 "    ->EOI<7,7>$"
             ]
         );
@@ -274,10 +276,10 @@ mod tests {
         test_case_lexable!(
             "{x=y;a=b;}",
             vec![
-                "File->Dictionary->DictEntry->DictKey->String<1,2>: x",
-                "                           ->DictVal->String<3,4>: y",
-                "                ->DictEntry->DictKey->String<5,6>: a",
-                "                           ->DictVal->String<7,8>: b",
+                "File->Dictionary->DictEntry->DictKey->String->UnquotedString<1,2>: x",
+                "                           ->DictVal->String->UnquotedString<3,4>: y",
+                "                ->DictEntry->DictKey->String->UnquotedString<5,6>: a",
+                "                           ->DictVal->String->UnquotedString<7,8>: b",
                 "    ->EOI<10,10>$"
             ]
         );
@@ -300,11 +302,11 @@ mod tests {
         test_case_lexable!(
             "{x = (1, 2); y = 3;}",
             vec![
-                "File->Dictionary->DictEntry->DictKey->String<1,2>: x",
-                "                           ->DictVal->Array->ArrayEntry->String<6,7>: 1",
-                "                                           ->ArrayEntry->String<9,10>: 2",
-                "                ->DictEntry->DictKey->String<13,14>: y",
-                "                           ->DictVal->String<17,18>: 3",
+                "File->Dictionary->DictEntry->DictKey->String->UnquotedString<1,2>: x",
+                "                           ->DictVal->Array->ArrayEntry->String->UnquotedString<6,7>: 1",
+                "                                           ->ArrayEntry->String->UnquotedString<9,10>: 2",
+                "                ->DictEntry->DictKey->String->UnquotedString<13,14>: y",
+                "                           ->DictVal->String->UnquotedString<17,18>: 3",
                 "    ->EOI<20,20>$"
             ]
         );

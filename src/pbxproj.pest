@@ -38,21 +38,18 @@ Comment = _{
 
 /* Strings */
 
-QuotedStringCharacters = @{
-    !("\"" | "\\") ~ ANY
-    | "\\" ~ ("\"" | "\\" | "n" | "r" | "t")
-}
-
 QuotedString = @{
-    "\"" ~ (QuotedStringCharacters)* ~ "\""
+    (!("\"" | "\\") ~ ANY)+
+    | ("\\" ~ ("\"" | "\\" | "n" | "r" | "t"))+
 }
 
 UnquotedString = @{
     (ASCII_ALPHANUMERIC | "_" | "$" | "+" | "/" | ":" | "." | "-")+
 }
 
-String = @{
-    QuotedString | UnquotedString
+String = ${
+    "\"" ~ QuotedString* ~ "\""
+    | UnquotedString+
 }
 
 /* Arrays */
