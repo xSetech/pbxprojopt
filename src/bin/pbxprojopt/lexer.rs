@@ -54,9 +54,9 @@ pub fn visualize_matched_grammar_rule(
     //
     // If there is no matching text (e.g. EOI), a "$" is used in place of ": "
     if inner_pairs.len() == 0 {
-        let span_value = format!("{}", span.as_str().escape_debug());
+        let span_value = format!("{}", span.as_str());
         let leaf_text: String = if span_value.is_empty() { String::from("$") } else {
-            format!(": {}", span.as_str().escape_debug())
+            format!(": {}", span.as_str())
         };
         match buffer {
             Some(buf) => buf.push_str(leaf_text.as_str()),
@@ -207,7 +207,7 @@ mod tests {
         test_case_lexable!(
             "\"abc123\"",
             vec![
-                r#"File->String<0,8>: \"abc123\""#,
+                r#"File->String<0,8>: "abc123""#,
                 r#"    ->EOI<8,8>$"#
             ]
         );
