@@ -1,4 +1,6 @@
-// Grammar for the OpenStep/Next-style property list as used by XCode
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+//! Grammar for the OpenStep/Next-style property list as used by XCode
 
 WHITESPACE = _{ " " | "\t" | "\n" | "\r" }
 

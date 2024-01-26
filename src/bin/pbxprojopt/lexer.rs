@@ -1,4 +1,6 @@
-//! .pbxproj lexer derivation
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+//! Lexical analyzer automatically derived from a pest.rs grammar
 
 use ansi_term::Style;
 use pest::iterators::Pair;

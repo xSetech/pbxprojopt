@@ -1,4 +1,6 @@
-//! CLI arguments
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+//! pbxprojopt CLI arguments
 
 use std::path::PathBuf;
 
